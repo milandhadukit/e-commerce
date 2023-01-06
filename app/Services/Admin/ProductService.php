@@ -9,15 +9,15 @@ class ProductService extends BaseService
     private $productService;
     public function __construct()
     {
-         $this->productService=new ProductRepository();
+        $this->productService = new ProductRepository();
     }
-    public function addProduct($req)
+    public function addProduct($req, $imageName)
     {
-        return $this->productService->addProduct($req);
+        return $this->productService->addProduct($req, $imageName);
     }
-    public function updateProduct($req,$id)
+    public function updateProduct($req, $id)
     {
-        return $this->productService->updateProduct($req,$id);
+        return $this->productService->updateProduct($req, $id);
     }
     public function deleleProduct($id)
     {

@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\UserDetailController;
+use App\Http\Controllers\CategoryandProductController;
+use App\Http\Controllers\CartController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -40,5 +43,13 @@ Route::group([
     Route::get('/view-product-category/{id}', [ProductController::class, 'viewProductByCategory']);
 
 
+    Route::post('/add-details', [UserDetailController::class, 'addUserDetails']);
+
+    #view category,product and productview based on category without login  
+    Route::get('/view-category', [CategoryandProductController::class, 'viewCategory']);
+    Route::get('/view-product', [CategoryandProductController::class, 'viewProduct']);
+    Route::get('/view-product-category/{id}', [CategoryandProductController::class, 'viewProducOnCategory']);
+
+    Route::post('/add-cart', [CartController::class, 'addToCart']);
 
 });

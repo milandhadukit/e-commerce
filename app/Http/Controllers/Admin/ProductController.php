@@ -23,20 +23,34 @@ class ProductController extends Controller
             if ($this->checkrole->role == 'Admin') {
                 $req = $request->all();
 
+               
                 $validator = Validator::make($req, [
                     'name' => 'required|min:1',
                     'description' => 'required',
                     'price' => 'required|numeric|gt:0',
                     'category_id'=>'required|exists:categories,id',
+                 
                    
                 ]);
+                $request->validate([
+                   
+                    'image'=>'required',
+        
+                ],
+                [
+                    'image.required' => 'Plz Select Image',
+                    
+                ]);
+            
+                $imageName = time().'.'.$request->image->getClientOriginalExtension();
                 if ($validator->fails()) {
                     return response()->json(
                         $validator->errors()->toJson(),
                         400
                     );
                 }
-                $this->productController->addProduct($req);
+                
+                $this->productController->addProduct($req, $imageName);
                 return $this->sendResponse(
                     'success',
                     'Product successfully Add'
@@ -59,8 +73,10 @@ class ProductController extends Controller
                     'description' => 'required',
                     'price' => 'required|numeric|gt:0',
                     'category_id'=>'required|exists:categories,id',
+                    'image'=>'required',
                    
                 ]);
+                // $imageName = time().'.'.$request->image->getClientOriginalExtension();
                 if ($validator->fails()) {
                     return response()->json(
                         $validator->errors()->toJson(),
