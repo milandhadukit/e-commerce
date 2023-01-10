@@ -8,6 +8,9 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\UserDetailController;
 use App\Http\Controllers\CategoryandProductController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Admin\OrderAdminController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,6 +29,7 @@ Route::group([
     'middleware' => 'api',
     // 'prefix' => 'auth'
 ], function ($router) {
+
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -42,6 +46,15 @@ Route::group([
     Route::delete('/delete-product/{id}', [ProductController::class, 'deleleProduct']);
     Route::get('/view-product-category/{id}', [ProductController::class, 'viewProductByCategory']);
 
+    Route::post('/view-order-list', [OrderAdminController::class, 'orderList']);
+    Route::post('/view-cencel-list', [OrderAdminController::class, 'orderCancelList']);
+    Route::get('/view-search-list', [OrderAdminController::class, 'serchOrder']);
+
+
+
+
+
+
 
     Route::post('/add-details', [UserDetailController::class, 'addUserDetails']);
 
@@ -51,5 +64,20 @@ Route::group([
     Route::get('/view-product-category/{id}', [CategoryandProductController::class, 'viewProducOnCategory']);
 
     Route::post('/add-cart', [CartController::class, 'addToCart']);
+    Route::get('/view-cart', [CartController::class, 'viewCart']);
+    Route::post('/remove-cart/{id}', [CartController::class, 'removeCart']);
+
+    Route::post('/add-order', [OrderController::class, 'addOrder']);
+    Route::post('/cencel-order/{id}', [OrderController::class, 'cancelOrder']);
+    Route::post('/my-order', [OrderController::class, 'myOrder']);
+
+   
+
+    Route::post('/add-payment', [PaymentController::class, 'payment']);
+    // https://www.ultimateakash.com/blog-details/IixTJGAKYAo=/How-to-Integrate-Stripe-Payment-Gateway-In-Laravel-2022
+
+
+
+
 
 });

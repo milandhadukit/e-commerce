@@ -11,8 +11,16 @@ class CartService extends BaseService
     {
          $this->cartService=new CartRepository();
     }   
-    public function addToCart($req)
+    public function addToCart($req,$request)
     {
-        return  $this->cartService->addToCart($req);
+        return  $this->cartService->addToCart($req,$request);
+    }
+    public function viewCart()
+    {
+        return  $this->cartService->viewCart();
+    }
+    public function removeCart($id)
+    {
+        return $this->cartService->removeCart($id);
     }
 }

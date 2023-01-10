@@ -6,17 +6,53 @@ use App\Models\Cart;
 
 class CartRepository extends BaseRepository
 {
-    public function addToCart($req)
+    public function addToCart($req, $request)
     {
-        $cartDetails = [
-            'quantity' => $req['quantity'],
-            'total_price' => $req['total_price'],
-            'user_id' => auth()->user()->id,
-            'product_id' => $req['product_id'],
+        $check = Cart::select('product_id')
+            ->where('user_id', auth()->user()->id)
+            ->where('product_id', $request->product_id)
+            ->first();
+        // return $check;
+        // dd($check);
 
-        ];
-        
-        $cartAdd = Cart::create($cartDetails);
-        return $cartAdd;
+        if (empty($check)) {
+            $cartDetails = [
+                'quantity' => $req['quantity'],
+                'total_price' => $req['total_price'],
+                'user_id' => auth()->user()->id,
+                'product_id' => $req['product_id'],
+            ];
+
+            $cartAdd = Cart::create($cartDetails);
+            return $cartAdd;
+        }
+    }
+
+    public function viewCart()
+    {
+        $viewCartDetails = Cart::select(
+            'carts.product_id',
+            'products.name',
+            'products.description',
+            'products.image',
+            'carts.quantity'
+        )
+            ->where('user_id', auth()->user()->id)
+            ->join('products', 'products.id', 'carts.product_id')
+            ->get();
+
+        return $viewCartDetails;
+    }
+
+    public function removeCart($id)
+    {
+        $removeProduct = Cart::where('user_id', auth()->user()->id)->find($id);
+
+        if (empty($removeProduct)) {
+            return null;
+           
+        }
+        $removeProduct->delete();
+        return $removeProduct;
     }
 }

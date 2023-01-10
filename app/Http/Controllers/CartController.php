@@ -32,7 +32,7 @@ class CartController extends Controller
             if ($validator->fails()) {
                 return response()->json($validator->errors()->toJson(), 400);
             }
-            $this->cartController->addToCart($req);
+            $this->cartController->addToCart($req,$request);
             return $this->sendResponse('success', 'Add Cart  successfully Add');
 
            
@@ -40,4 +40,30 @@ class CartController extends Controller
             return $this->sendError('error', $e->getMessage());
         }
     }
+
+    public function viewCart(Request $request)
+    {
+        try {
+        
+           $viewCart= $this->cartController->viewCart();
+            return $this->sendResponse('success',   $viewCart);
+
+           
+        } catch (\Exception $e) {
+            return $this->sendError('error', $e->getMessage());
+        }
+    }
+
+    public function removeCart($id)
+    {
+        try {
+        
+           $this->cartController->removeCart($id);
+            return $this->sendResponse('success', 'Remove Product');
+        } catch (\Exception $e) {
+            return $this->sendError('error', $e->getMessage());
+        }
+    }
+
+
 }
