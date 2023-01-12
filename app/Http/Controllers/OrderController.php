@@ -11,6 +11,8 @@ use App\Models\Order;
 use Razorpay\Api\Api;
 use Session;
 use Exception;
+use App\Models\Payment;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -18,7 +20,7 @@ class OrderController extends Controller
 
     public function __construct()
     {
-        // $this->middleware('auth:api');
+        $this->middleware('auth:api');
         $this->orderController = new OrderService();
     }
 
@@ -37,14 +39,19 @@ class OrderController extends Controller
             }
 
             $checkDetails= UserDetail::where('user_id',auth()->user()->id)->first();
-       
             if(empty($checkDetails))
             {
                 return $this->wrongPass('sorry', 'plz fullfill Details');
      
             }
+            // $date=Carbon::now();
+            // $date->format('Y.m.d');
+            // $paymentCheck=Payment::where('user_id',auth()->user()->id)
+            // ->where('product_id',$request->product_id)
+            // ->where('date',$date)
+            // ->get();
          
-
+        
             $this->orderController->addOrder($req,$request);
             return $this->sendResponse('success', 'Order Successfully ');
 
@@ -92,6 +99,7 @@ class OrderController extends Controller
     {
         try{
            $order= $this->orderController->myOrder();
+           
            return $this->sendResponse('success', $order);
 
         }

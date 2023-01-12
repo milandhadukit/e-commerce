@@ -16,11 +16,8 @@ class CategoryandProductController extends Controller
     public function viewCategory()
     {
         try {
-            
-            $category=  $this->categoryProductController->viewCategory();
-            return $this->sendResponse('success',   $category);
-
-           
+            $category = $this->categoryProductController->viewCategory();
+            return $this->sendResponse('success', $category);
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
         }
@@ -29,25 +26,20 @@ class CategoryandProductController extends Controller
     public function viewProduct()
     {
         try {
-            
-            $product=  $this->categoryProductController->viewProduct();
-            return $this->sendResponse('success',   $product);
-
-           
+            $product = $this->categoryProductController->viewProduct();
+            return $this->sendResponse('success', $product);
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
         }
     }
 
-
     public function viewProducOnCategory($id)
     {
         try {
-            
-            $viewProducOnCategory=  $this->categoryProductController->viewProducOnCategory($id);
-            return $this->sendResponse('success',   $viewProducOnCategory);
-
-           
+            $viewProducOnCategory = $this->categoryProductController->viewProducOnCategory(
+                $id
+            );
+            return $this->sendResponse('success', $viewProducOnCategory);
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
         }

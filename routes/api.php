@@ -11,6 +11,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\OrderAdminController;
+use App\Http\Controllers\Admin\DiscountController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -45,16 +46,26 @@ Route::group([
     Route::post('/update-product/{id}', [ProductController::class, 'updateProduct']);
     Route::delete('/delete-product/{id}', [ProductController::class, 'deleleProduct']);
     Route::get('/view-product-category/{id}', [ProductController::class, 'viewProductByCategory']);
+    Route::post('/view-product', [ProductController::class, 'productLOV']);
 
     Route::post('/view-order-list', [OrderAdminController::class, 'orderList']);
     Route::post('/view-cencel-list', [OrderAdminController::class, 'orderCancelList']);
-    Route::get('/view-search-list', [OrderAdminController::class, 'serchOrder']);
+    Route::post('/view-search-list', [OrderAdminController::class, 'serchOrder']);
 
+    Route::post('/add-discount', [DiscountController::class, 'addDescount']);
+    Route::post('/view-discount', [DiscountController::class, 'viewDiscountOnProduct']);
+    Route::post('/close-discount/{id}', [DiscountController::class, 'closeDiscount']);
+    Route::post('/active-discount/{id}', [DiscountController::class, 'activeDiscount']);
+    Route::post('/update-discount/{id}', [DiscountController::class, 'updateDiscount']);
 
+    Route::post('/add-discount-percentage', [DiscountController::class, 'addDiscountPercentage']);
+    Route::post('/close-percentage/{id}', [DiscountController::class, 'closeDiscountPercentage']);
+    Route::post('/active-percentage/{id}', [DiscountController::class, 'activeDiscountPercentage']);
+    Route::post('/view-discount-percentage', [DiscountController::class, 'viewDiscountPercentage']);
+    Route::post('/update-discount-percentage/{id}', [DiscountController::class, 'updateDiscountPercentage']);
+ 
 
-
-
-
+    
 
     Route::post('/add-details', [UserDetailController::class, 'addUserDetails']);
 

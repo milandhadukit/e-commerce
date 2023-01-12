@@ -44,12 +44,18 @@ class OrderAdminRepository extends BaseRepository
     }
     public function serchOrder($request)
     {
-        $searchData = Product::
-        where(
-            'name',
-            'like',
-            '%'.$request->search.'%'
-        )->get();
+        $searchData = $this->orderRepoitory
+            ->select(
+                'orders.id',
+                'products.name',
+                'products.description',
+                'products.image',
+                'orders.date'
+            )
+            ->join('products', 'products.id', 'orders.product_id')
+            ->where('products.name', 'like', '%' . $request->search . '%')
+
+            ->get();
         return $searchData;
     }
 }

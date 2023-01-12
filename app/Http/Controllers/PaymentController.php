@@ -10,6 +10,10 @@ use Stripe\StripeClient;
 use Session;
 use Stripe;
 use App\Models\Payment;
+use Carbon\Carbon;
+use App\Models\UserDetail;
+use App\Models\DiscountPercentage;
+use App\Models\Product;
 
 class PaymentController extends Controller
 {
@@ -17,8 +21,10 @@ class PaymentController extends Controller
     public function __construct()
     {
         // $this->stripe = new StripeClient(config('stripe.api_keys.secret_key'));
-          $this->middleware('auth:api');
-         $this->stripe = new StripeClient('sk_test_51MObnySHLo1SypL9kQvmnrRaFYVvrgmzh5SzzQp0nfe8la1kwqBplAjAkvwVUYivRSlTwG1JLCpLzUcDQOC1hKlq00pL9akIqT');
+        $this->middleware('auth:api');
+        $this->stripe = new StripeClient(
+            'sk_test_51MObnySHLo1SypL9kQvmnrRaFYVvrgmzh5SzzQp0nfe8la1kwqBplAjAkvwVUYivRSlTwG1JLCpLzUcDQOC1hKlq00pL9akIqT'
+        );
     }
 
     public function index()
@@ -34,40 +40,64 @@ class PaymentController extends Controller
             'month' => 'required|max:2',
             'year' => 'required|min:4',
             'cvv' => 'required|max:3',
-            'price'=>'required|integer',
+            'price' => 'required|integer',
+            'product_id' => 'required|exists:products,id',
         ]);
-
+        $mytime = Carbon::now();
         if ($validator->fails()) {
-
-           return response()->json($validator->errors()->toJson(), 400);
+            return response()->json($validator->errors()->toJson(), 400);
         }
 
         $token = $this->createToken($request);
 
-       
-
         if (!empty($token['error'])) {
-           return $this->wrongPass('danger', $token['error']);
-           
+            return $this->wrongPass('danger', $token['error']);
         }
         if (empty($token['id'])) {
             return $this->wrongPass('danger', 'Payment failed.');
-            
         }
 
         $charge = $this->createCharge($token['id'], $request->price);
-        // dd($charge);
 
-        // if (!empty($charge) && $charge['status'] == 'succeeded') {
-          
-          
+        $paymentToken = $token->toArray();
 
-            return $this->sendResponse('success', 'Payment completed ');
+        $checkDetails = UserDetail::where(
+            'user_id',
+            auth()->user()->id
+        )->first();
+        if (empty($checkDetails)) {
+            return $this->wrongPass('sorry', 'plz fullfill Order Details ');
+        }
 
-        // } else {
-            // $request->session()->flash('danger', 'Payment failed.');
-        // }
-    
+        $couponCode = DiscountPercentage::select(
+            'coupon',
+            'discount_percentage'
+        )
+            ->where('coupon', $request->coupon)
+            ->where('active_percentage',1)
+            ->first();
+        $productPrice = Product::select('price')
+            ->where('id', $request->product_id)
+            ->first();
+        $prices = $request->price;
+        if (isset($couponCode['coupon'])) {
+            $price =
+                ($couponCode['discount_percentage'] * $productPrice['price']) /
+                100;
+
+            $prices = $productPrice['price'] - $price;
+        }
+
+        Payment::create([
+            'user_id' => auth()->user()->id,
+            'card_number' => $request['cardNumber'],
+            'token_id' => $paymentToken['id'],
+            'price' => $prices,
+            'product_id' => $request->product_id,
+            'date' => $mytime->format('Y-m-d H:i:s'),
+        ]);
+
+        return $this->sendResponse('success', 'Payment completed ');
     }
 
     private function createToken($cardData)
@@ -79,8 +109,8 @@ class PaymentController extends Controller
                     'number' => $cardData['cardNumber'],
                     'exp_month' => $cardData['month'],
                     'exp_year' => $cardData['year'],
-                    'cvc' => $cardData['cvv']
-                ]
+                    'cvc' => $cardData['cvv'],
+                ],
             ]);
         } catch (\CardException $e) {
             $token['error'] = $e->getError()->message;
@@ -98,21 +128,17 @@ class PaymentController extends Controller
                 'amount' => $amount,
                 'currency' => 'amd',
                 'source' => $tokenId,
-                'description' => 'order payment'
+                'description' => 'order payment',
             ]);
 
-            //inr 
-
-
+            //inr
         } catch (Exception $e) {
             $charge['error'] = $e->getMessage();
         }
         return $charge;
     }
 
-
-
-// -------------------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------
 
     // public function stripe()
     // {
@@ -122,16 +148,16 @@ class PaymentController extends Controller
     // public function stripePost(Request $request)
     // {
     //     Stripe::setApiKey(env('STRIPE_SECRET'));
-    
+
     //         Charge::create ([
     //             "amount" => 100 * 100,
     //             "currency" => "usd",
     //             "source" => $request->stripeToken,
-    //             "description" => "Test payment " 
+    //             "description" => "Test payment "
     //     ]);
-      
+
     //     Session::flash('success', 'Payment successful!');
-              
+
     //     return back();
     // }
 }

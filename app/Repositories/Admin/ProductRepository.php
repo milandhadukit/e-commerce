@@ -64,4 +64,9 @@ class ProductRepository extends BaseRepository
         $viewProduct = Product::where('category_id', $id)->get();
         return $viewProduct;
     }
+    public function productLOV()
+    {
+        $product=Product::all();
+        return $product;
+    }
 }

@@ -27,4 +27,8 @@ class ProductService extends BaseService
     {
         return $this->productService->viewProductByCategory($id);
     }
+    public function productLOV()
+    {
+        return $this->productService->productLOV();
+    }
 }

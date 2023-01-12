@@ -23,33 +23,32 @@ class ProductController extends Controller
             if ($this->checkrole->role == 'Admin') {
                 $req = $request->all();
 
-               
                 $validator = Validator::make($req, [
                     'name' => 'required|min:1',
                     'description' => 'required',
                     'price' => 'required|numeric|gt:0',
-                    'category_id'=>'required|exists:categories,id',
-                 
-                   
+                    'category_id' => 'required|exists:categories,id',
                 ]);
-                $request->validate([
-                   
-                    'image'=>'required',
-        
-                ],
-                [
-                    'image.required' => 'Plz Select Image',
-                    
-                ]);
-            
-                $imageName = time().'.'.$request->image->getClientOriginalExtension();
+                $request->validate(
+                    [
+                        'image' => 'required',
+                    ],
+                    [
+                        'image.required' => 'Plz Select Image',
+                    ]
+                );
+
+                $imageName =
+                    time() .
+                    '.' .
+                    $request->image->getClientOriginalExtension();
                 if ($validator->fails()) {
                     return response()->json(
                         $validator->errors()->toJson(),
                         400
                     );
                 }
-                
+
                 $this->productController->addProduct($req, $imageName);
                 return $this->sendResponse(
                     'success',
@@ -59,10 +58,10 @@ class ProductController extends Controller
             return $this->sendError('sorry', 'invalid Login');
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
-        }   
+        }
     }
 
-    public function updateProduct(Request $request,$id)
+    public function updateProduct(Request $request, $id)
     {
         try {
             if ($this->checkrole->role == 'Admin') {
@@ -72,9 +71,8 @@ class ProductController extends Controller
                     'name' => 'required|min:1',
                     'description' => 'required',
                     'price' => 'required|numeric|gt:0',
-                    'category_id'=>'required|exists:categories,id',
-                    'image'=>'required',
-                   
+                    'category_id' => 'required|exists:categories,id',
+                    'image' => 'required',
                 ]);
                 // $imageName = time().'.'.$request->image->getClientOriginalExtension();
                 if ($validator->fails()) {
@@ -83,7 +81,7 @@ class ProductController extends Controller
                         400
                     );
                 }
-                $this->productController->updateProduct($req,$id);
+                $this->productController->updateProduct($req, $id);
                 return $this->sendResponse(
                     'success',
                     'Product successfully Update'
@@ -92,14 +90,13 @@ class ProductController extends Controller
             return $this->sendError('sorry', 'invalid Login');
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
-        }   
+        }
     }
 
     public function deleleProduct($id)
     {
         try {
             if ($this->checkrole->role == 'Admin') {
-                
                 $this->productController->deleleProduct($id);
                 return $this->sendResponse(
                     'success',
@@ -111,23 +108,27 @@ class ProductController extends Controller
             return $this->sendError('error', $e->getMessage());
         }
     }
-    
+
     //view product based on category
     public function viewProductByCategory($id)
     {
         try {
             if ($this->checkrole->role == 'Admin') {
-                
-                $view= $this->productController->viewProductByCategory($id);
-                return $this->sendResponse(
-                    'success',
-                    $view,
-                );
+                $view = $this->productController->viewProductByCategory($id);
+                return $this->sendResponse('success', $view);
             }
             return $this->sendError('sorry', 'invalid Login');
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
         }
     }
-
+    public function productLOV()
+    {
+        try {
+            $view = $this->productController->productLOV();
+            return $this->sendResponse('success', $view);
+        } catch (\Exception $e) {
+            return $this->sendError('error', $e->getMessage());
+        }
+    }
 }

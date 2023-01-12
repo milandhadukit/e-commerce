@@ -3,14 +3,13 @@ namespace App\Repositories;
 use App\Repositories\BaseRepository;
 use App\Models\Order;
 use Carbon\Carbon;
-use App\Models\UserDetail;
+use App\Models\Payment;
 
 class OrderRepository extends BaseRepository
 {
     public function addOrder($req)
     {
         $date = Carbon::now();
-
         $orderData = [
             'user_id' => auth()->user()->id,
             'product_id' => $req['product_id'],
@@ -30,14 +29,16 @@ class OrderRepository extends BaseRepository
         $cancelOrders->update($orderCencel);
         return $cancelOrders;
     }
+
     public function myOrder()
     {
-        $myOrder = Order::where('user_id', auth()->user()->id)
+        $myOrders = Order::where('user_id', auth()->user()->id)
             ->where('status', 1)
             ->select('products.id','products.name', 'products.description', 'products.image','orders.date')
             ->join('products', 'products.id', 'orders.product_id')
             ->get();
 
-        return $myOrder;
+           
+        return $myOrders;
     }
 }
