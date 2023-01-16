@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Services\CategoryandProductService;
 
@@ -23,10 +25,20 @@ class CategoryandProductController extends Controller
         }
     }
 
-    public function viewProduct()
+    //view product listing & pagination manage
+    public function viewProduct(Request  $request)
     {
         try {
-            $product = $this->categoryProductController->viewProduct();
+
+            // $page= $request['page'];
+            // $perPage=$request['perPage'];
+
+            $pageNumber = isset($request['page']) && !empty($request['page']) ? $request['page'] : 1;
+            $pageLimit = isset($request['perPage']) && !empty($request['perPage']) ? $request['perPage'] : 5;
+            $page = ($pageNumber - 1) * $pageLimit;
+
+          
+            $product = $this->categoryProductController->viewProduct( $page,  $pageLimit);
             return $this->sendResponse('success', $product);
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
@@ -36,10 +48,41 @@ class CategoryandProductController extends Controller
     public function viewProducOnCategory($id)
     {
         try {
+
+            $checkCategory=Category::where('id',$id)->first();
+         
+            if(empty($checkCategory))
+            {
+                return $this->noAvailable('sorry','No Category Found');
+            }
+
+            $checkCategoryProduct=Product::where('category_id',$id)->first();
+            if(empty($checkCategoryProduct))
+            {
+                return $this->sendResponse('success', 'No Product Found');
+            }
+
             $viewProducOnCategory = $this->categoryProductController->viewProducOnCategory(
                 $id
             );
+           
             return $this->sendResponse('success', $viewProducOnCategory);
+        } catch (\Exception $e) {
+            return $this->sendError('error', $e->getMessage());
+        }
+    }
+
+
+    public function viewSingleProduct($id)
+    {
+        try {
+            $viewSingleProduct=Product::where('id',$id)->first();
+            if(empty($viewSingleProduct))
+            {
+                return $this->noAvailable('sorry','Not Found');
+            }
+            $category = $this->categoryProductController->viewSingleProduct($id);
+            return $this->sendResponse('success', $category);
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
         }

@@ -46,4 +46,14 @@ class Controller extends BaseController
         return response()->json($response, $code);
     }
 
+    public function noAvailable($error,$result,$code=404)
+    {
+        $response = [
+            'success' => false,
+            'message' => $error,
+            'data' => $result,
+        ];
+
+        return response()->json($response, $code);
+    }
 }

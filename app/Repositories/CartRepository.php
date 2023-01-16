@@ -15,14 +15,23 @@ class CartRepository extends BaseRepository
         // return $check;
         // dd($check);
 
+        $productPrice = Product::select('price')
+            ->where('id', $request->product_id)
+            ->first();
+
+        $qty = $request->quantity;
+        $qtryTotal = $productPrice['price'] * $qty;
+
+        //   dd($qtryTotal);
+
         if (empty($check)) {
             $cartDetails = [
                 'quantity' => $req['quantity'],
-                'total_price' => $req['total_price'],
+                'total_price' => $qtryTotal,
                 'user_id' => auth()->user()->id,
                 'product_id' => $req['product_id'],
             ];
-
+           
             $cartAdd = Cart::create($cartDetails);
             return $cartAdd;
         }
@@ -35,7 +44,8 @@ class CartRepository extends BaseRepository
             'products.name',
             'products.description',
             'products.image',
-            'carts.quantity'
+            'carts.quantity',
+            'carts.total_price',
         )
             ->where('user_id', auth()->user()->id)
             ->join('products', 'products.id', 'carts.product_id')
@@ -49,8 +59,7 @@ class CartRepository extends BaseRepository
         $removeProduct = Cart::where('user_id', auth()->user()->id)->find($id);
 
         if (empty($removeProduct)) {
-            return null;
-           
+            return null;  
         }
         $removeProduct->delete();
         return $removeProduct;

@@ -13,12 +13,15 @@ class CategoryandProductRepositery extends BaseRepository
 
         return $categoryView;
     }
-    public function viewProduct()
+
+
+    public function viewProduct( $page,  $pageLimit)
     {
         // $product = Product::get();
         // return $product;
 
         $productPrice = Product::select(
+            'products.id',
             'products.name',
             'products.description',
             'products.image',
@@ -43,7 +46,7 @@ class CategoryandProductRepositery extends BaseRepository
                     '1'
                 );
             })
-
+            ->skip($page)->take($pageLimit)
             ->get();
         return $productPrice;
     }
@@ -52,5 +55,12 @@ class CategoryandProductRepositery extends BaseRepository
     {
         $viewProduct = Product::where('category_id', $id)->get();
         return $viewProduct;
+    }
+
+    public function viewSingleProduct($id)
+    {
+        $viewSingleProduct=Product::select('id','name','description')->where('id',$id)->first();
+        return $viewSingleProduct;
+
     }
 }

@@ -15,13 +15,17 @@ class CategoryandProductService extends BaseService
     {
         return $this->categoryProductService->viewCategory();
     }
-    public function viewProduct()
+    public function viewProduct( $page, $pageLimit)
     {
-        return $this->categoryProductService->viewProduct();
+        return $this->categoryProductService->viewProduct( $page, $pageLimit);
     }
     public function viewProducOnCategory($id)
     {
 
         return $this->categoryProductService->viewProducOnCategory($id);
+    }
+    public function viewSingleProduct($id)
+    {
+        return $this->categoryProductService->viewSingleProduct($id);
     }
 }

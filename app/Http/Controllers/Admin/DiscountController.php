@@ -123,7 +123,7 @@ class DiscountController extends Controller
                 $validator = Validator::make($req, [
                     'discount_percentage' => 'required|integer|not_in:0',
                     'product_id' => 'required|exists:products,id',
-                    'tc'=>'required',
+                    'tc' => 'required',
                 ]);
                 if ($validator->fails()) {
                     return response()->json(
@@ -183,7 +183,7 @@ class DiscountController extends Controller
             return $this->sendError('error', $e->getMessage());
         }
     }
-    public function updateDiscountPercentage(Request $request,$id)
+    public function updateDiscountPercentage(Request $request, $id)
     {
         try {
             if ($this->checkrole->role == 'Admin') {
@@ -191,7 +191,7 @@ class DiscountController extends Controller
 
                 $validator = Validator::make($req, [
                     'discount_percentage' => 'required|integer|not_in:0',
-                    'tc'=>'required',
+                    'tc' => 'required',
                 ]);
                 if ($validator->fails()) {
                     return response()->json(
@@ -199,7 +199,7 @@ class DiscountController extends Controller
                         400
                     );
                 }
-                $this->discountController->updateDiscountPercentage($req,$id);
+                $this->discountController->updateDiscountPercentage($req, $id);
                 return $this->sendResponse(
                     'success',
                     'Discount Percentage successfully Update'
@@ -211,6 +211,13 @@ class DiscountController extends Controller
         }
     }
 
-
-
+    public function viewCoupon()
+    {
+        try {
+            $viewCoupon = $this->discountController->viewCoupon();
+            return $this->sendResponse('success', $viewCoupon);
+        } catch (\Exception $e) {
+            return $this->sendError('error', $e->getMessage());
+        }
+    }
 }

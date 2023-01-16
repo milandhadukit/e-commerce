@@ -9,6 +9,9 @@ class OrderRepository extends BaseRepository
 {
     public function addOrder($req)
     {
+
+        
+
         $date = Carbon::now();
         $orderData = [
             'user_id' => auth()->user()->id,
@@ -16,7 +19,7 @@ class OrderRepository extends BaseRepository
             'date' => $date->format('Y-m-d'),
         ];
 
-        //  dd($orderData);
+         dd($orderData);
         $orderAdd = Order::create($orderData);
         return $orderAdd;
     }

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Validator;
 use App\Services\Admin\CategoryService;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
@@ -29,11 +30,7 @@ class CategoryController extends Controller
                 $validator = Validator::make($req, [
                     'name' => 'required|min:1',
                     'description' => 'required',
-                    // 'state' => 'required|regex:/^[a-zA-Z ]+$/',
-                    // 'city' => 'required|regex:/^[a-zA-Z ]+$/',
-                    // 'area' => 'required|regex:/^[a-zA-Z ]+$/',
-                    // 'candidates' => 'required',
-                    // 'end_date' => 'required|after_or_equal:today',
+                   
                 ]);
                 if ($validator->fails()) {
                     return response()->json(
@@ -73,6 +70,11 @@ class CategoryController extends Controller
                         400
                     );
                 }
+                $checkId=Category::where('id',$id)->first();
+                if (empty($checkId)) {
+                    return $this->noAvailable('sorry', 'Not Found');
+                }
+
                 $this->categoryController->updateCategory($req,$id);
                 return $this->sendResponse(
                     'success',
@@ -90,7 +92,10 @@ public function deleteCategory($id)
     {
         try {
             if ($this->checkrole->role == 'Admin') {
-                
+                $checkId=Category::where('id',$id)->first();
+                if (empty($checkId)) {
+                    return $this->noAvailable('sorry', 'Not Found');
+                }
                 $this->categoryController->deleteCategory($id);
                 return $this->sendResponse(
                     'success',

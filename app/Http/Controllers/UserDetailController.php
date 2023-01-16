@@ -23,7 +23,7 @@ class UserDetailController extends Controller
             $req = $request->all();
 
             $validator = Validator::make($req, [
-                'name' => 'required|min:1|regex:/^[a-zA-Z ]+$/',
+                'name' => 'required|min:2|regex:/^[a-zA-Z ]+$/',
                 'state' => 'required|regex:/^[a-zA-Z ]+$/',
                 'city' => 'required|regex:/^[a-zA-Z ]+$/',
                 'address' => 'required',

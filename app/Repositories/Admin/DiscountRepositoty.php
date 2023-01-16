@@ -143,4 +143,12 @@ class DiscountRepositoty extends BaseRepository
         $updateDiscount->update($discountPercentage);
         return $updateDiscount;
     }
+    public function viewCoupon()
+    {
+        $viewOffers=DiscountPercentage::select('products.name','discount_percentages.tc','discount_percentages.coupon','discount_percentages.discount_percentage')
+        ->where('discount_percentages.active_percentage',1)
+        ->join('products', 'products.id', 'discount_percentages.product_id')
+        ->get();
+        return  $viewOffers;
+    }
 }

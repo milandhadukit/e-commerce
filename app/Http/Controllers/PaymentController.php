@@ -40,7 +40,7 @@ class PaymentController extends Controller
             'month' => 'required|max:2',
             'year' => 'required|min:4',
             'cvv' => 'required|max:3',
-            'price' => 'required|integer',
+            'price' => 'required|numeric',
             'product_id' => 'required|exists:products,id',
         ]);
         $mytime = Carbon::now();
@@ -74,8 +74,10 @@ class PaymentController extends Controller
             'discount_percentage'
         )
             ->where('coupon', $request->coupon)
-            ->where('active_percentage',1)
+            ->where('product_id', $request->product_id)
+            ->where('active_percentage', 1)
             ->first();
+
         $productPrice = Product::select('price')
             ->where('id', $request->product_id)
             ->first();
@@ -88,14 +90,26 @@ class PaymentController extends Controller
             $prices = $productPrice['price'] - $price;
         }
 
-        Payment::create([
-            'user_id' => auth()->user()->id,
-            'card_number' => $request['cardNumber'],
-            'token_id' => $paymentToken['id'],
-            'price' => $prices,
-            'product_id' => $request->product_id,
-            'date' => $mytime->format('Y-m-d H:i:s'),
-        ]);
+        if (isset($couponCode['coupon'])) {
+            Payment::create([
+                'coupon_code' => $request['coupon'],
+                'user_id' => auth()->user()->id,
+                'card_number' => $request['cardNumber'],
+                'token_id' => $paymentToken['id'],
+                'price' => $prices,
+                'product_id' => $request->product_id,
+                'date' => $mytime->format('Y-m-d H:i:s'),
+            ]);
+        } else {
+            Payment::create([
+                'user_id' => auth()->user()->id,
+                'card_number' => $request['cardNumber'],
+                'token_id' => $paymentToken['id'],
+                'price' => $prices,
+                'product_id' => $request->product_id,
+                'date' => $mytime->format('Y-m-d H:i:s'),
+            ]);
+        }
 
         return $this->sendResponse('success', 'Payment completed ');
     }

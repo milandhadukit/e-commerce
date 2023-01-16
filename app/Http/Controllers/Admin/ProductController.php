@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Admin\ProductService;
 use Validator;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
@@ -81,6 +82,12 @@ class ProductController extends Controller
                         400
                     );
                 }
+
+                $checkId = Product::where('id', $id)->first();
+                if (empty($checkId)) {
+                    return $this->noAvailable('sorry', 'Not Found');
+                }
+
                 $this->productController->updateProduct($req, $id);
                 return $this->sendResponse(
                     'success',
@@ -97,6 +104,10 @@ class ProductController extends Controller
     {
         try {
             if ($this->checkrole->role == 'Admin') {
+                $checkId = Product::where('id', $id)->first();
+                if (empty($checkId)) {
+                    return $this->noAvailable('sorry', 'Not Found');
+                }
                 $this->productController->deleleProduct($id);
                 return $this->sendResponse(
                     'success',

@@ -51,4 +51,8 @@ class DiscountServices extends BaseService
     {
         return $this->discountServices->updateDiscountPercentage($req,$id);
     }
+    public function viewCoupon()
+    {
+        return $this->discountServices->viewCoupon();
+    }
 }

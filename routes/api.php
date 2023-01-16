@@ -12,6 +12,8 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\OrderAdminController;
 use App\Http\Controllers\Admin\DiscountController;
+use App\Http\Controllers\CustomerReviewController;
+use App\Http\Controllers\Admin\ReviewCustomerController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -63,16 +65,27 @@ Route::group([
     Route::post('/active-percentage/{id}', [DiscountController::class, 'activeDiscountPercentage']);
     Route::post('/view-discount-percentage', [DiscountController::class, 'viewDiscountPercentage']);
     Route::post('/update-discount-percentage/{id}', [DiscountController::class, 'updateDiscountPercentage']);
+    Route::post('/view-coupon', [DiscountController::class, 'viewCoupon']); 
+
+    Route::get('/view-customer-review', [ReviewCustomerController::class, 'viewReview']);
+    Route::delete('/delete-customer-review/{id}', [ReviewCustomerController::class, 'deleteReview']);
  
 
-    
+
+    //user
+    Route::post('/add-review', [CustomerReviewController::class, 'addCustomerReview']);
+    Route::post('/update-review/{id}', [CustomerReviewController::class, 'updateCustomerReview']);
+    Route::post('/delete-review/{id}', [CustomerReviewController::class, 'deleteCustomerReview']);
+    Route::get('/view-review', [CustomerReviewController::class, 'viewMyReview']);
 
     Route::post('/add-details', [UserDetailController::class, 'addUserDetails']);
 
     #view category,product and productview based on category without login  
     Route::get('/view-category', [CategoryandProductController::class, 'viewCategory']);
-    Route::get('/view-product', [CategoryandProductController::class, 'viewProduct']);
+    Route::post('/view-product', [CategoryandProductController::class, 'viewProduct']);
     Route::get('/view-product-category/{id}', [CategoryandProductController::class, 'viewProducOnCategory']);
+    Route::get('/view-single-product/{id}', [CategoryandProductController::class, 'viewSingleProduct']);
+
 
     Route::post('/add-cart', [CartController::class, 'addToCart']);
     Route::get('/view-cart', [CartController::class, 'viewCart']);

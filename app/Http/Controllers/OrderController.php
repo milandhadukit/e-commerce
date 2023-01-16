@@ -44,14 +44,7 @@ class OrderController extends Controller
                 return $this->wrongPass('sorry', 'plz fullfill Details');
      
             }
-            // $date=Carbon::now();
-            // $date->format('Y.m.d');
-            // $paymentCheck=Payment::where('user_id',auth()->user()->id)
-            // ->where('product_id',$request->product_id)
-            // ->where('date',$date)
-            // ->get();
          
-        
             $this->orderController->addOrder($req,$request);
             return $this->sendResponse('success', 'Order Successfully ');
 
