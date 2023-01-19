@@ -20,9 +20,9 @@ class CustomerReviewService extends BaseService
         return $this->customerReviewRepository->updateCustomerReview($req,$id);
 
     }
-    public function deleteCustomerReview($id)
+    public function deleteMyReview($id)
     {
-        return $this->customerReviewRepository->deleteCustomerReview($id);
+        return $this->customerReviewRepository->deleteMyReview($id);
     }
 
     public function viewMyReview()

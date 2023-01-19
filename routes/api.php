@@ -75,7 +75,7 @@ Route::group([
     //user
     Route::post('/add-review', [CustomerReviewController::class, 'addCustomerReview']);
     Route::post('/update-review/{id}', [CustomerReviewController::class, 'updateCustomerReview']);
-    Route::post('/delete-review/{id}', [CustomerReviewController::class, 'deleteCustomerReview']);
+    Route::post('/delete-review/{id}', [CustomerReviewController::class, 'deleteMyReview']);
     Route::get('/view-review', [CustomerReviewController::class, 'viewMyReview']);
 
     Route::post('/add-details', [UserDetailController::class, 'addUserDetails']);

@@ -13,6 +13,7 @@ use Session;
 use Exception;
 use App\Models\Payment;
 use Carbon\Carbon;
+use App\Models\Product;
 
 class OrderController extends Controller
 {
@@ -20,8 +21,15 @@ class OrderController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        // $this->middleware('auth:api');
+        $this->middleware('auth');
         $this->orderController = new OrderService();
+    }
+
+    public function addOrderDetails()
+    {
+        // $productId=Product::find($id);
+        return view('addOrderDetails');
     }
 
     public function addOrder(Request $request)
@@ -41,12 +49,17 @@ class OrderController extends Controller
             $checkDetails= UserDetail::where('user_id',auth()->user()->id)->first();
             if(empty($checkDetails))
             {
-                return $this->wrongPass('sorry', 'plz fullfill Details');
-     
+                // return $this->wrongPass('sorry', 'plz fullfill order Details');
+                
+                return redirect()->route('add-detail')->with('success', 'plz fullfill order Details');
             }
+
          
             $this->orderController->addOrder($req,$request);
-            return $this->sendResponse('success', 'Order Successfully ');
+            // return $this->sendResponse('success', 'Order Successfully ');
+            // $productId=Product::find($id);
+            $id=$request->product_id;
+            return redirect()->route('payment-detail',compact('id'));
 
            
         } catch (\Exception $e) {

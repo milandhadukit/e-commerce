@@ -15,4 +15,12 @@ class UserDetailsService extends BaseService
     {
         return  $this->userDetailService->addUserDetails($req);
     }
+    public function viewOrderDetailsUser()
+    {
+        return  $this->userDetailService->viewOrderDetailsUser();
+    }
+    public function updateUserDetails($req,$id)
+    {
+        return  $this->userDetailService->updateUserDetails($req,$id);
+    }
 }

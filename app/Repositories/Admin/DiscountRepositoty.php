@@ -29,7 +29,7 @@ class DiscountRepositoty extends BaseRepository
     public function viewDiscountOnProduct()
     {
         $discount = $this->DiscountRepository
-            ->select('descreption', 'discount_price', 'product_id')
+            ->select('id', 'descreption', 'discount_price', 'product_id')
             ->where('active', 1)
             ->get();
         return $discount;
@@ -131,12 +131,11 @@ class DiscountRepositoty extends BaseRepository
             ->get();
         return $listDiscountPercentage;
     }
-    public function updateDiscountPercentage($req,$id)
+    public function updateDiscountPercentage($req, $id)
     {
         $discountPercentage = [
             'discount_percentage' => $req['discount_percentage'],
             'tc' => $req['tc'],
-            
         ];
 
         $updateDiscount = DiscountPercentage::find($id);
@@ -145,10 +144,15 @@ class DiscountRepositoty extends BaseRepository
     }
     public function viewCoupon()
     {
-        $viewOffers=DiscountPercentage::select('products.name','discount_percentages.tc','discount_percentages.coupon','discount_percentages.discount_percentage')
-        ->where('discount_percentages.active_percentage',1)
-        ->join('products', 'products.id', 'discount_percentages.product_id')
-        ->get();
-        return  $viewOffers;
+        $viewOffers = DiscountPercentage::select(
+            'products.name',
+            'discount_percentages.tc',
+            'discount_percentages.coupon',
+            'discount_percentages.discount_percentage'
+        )
+            ->where('discount_percentages.active_percentage', 1)
+            ->join('products', 'products.id', 'discount_percentages.product_id')
+            ->get();
+        return $viewOffers;
     }
 }

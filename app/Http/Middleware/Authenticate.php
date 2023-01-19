@@ -15,8 +15,12 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
+        // if (! $request->expectsJson()) {
+        //     throw new UnauthorizedHttpException('Not logged in');
+        // }
+        // return view('welcome');
         if (! $request->expectsJson()) {
-            throw new UnauthorizedHttpException('Not logged in');
+            return route('login');
         }
     }
 }

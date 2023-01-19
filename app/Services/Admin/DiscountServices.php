@@ -27,9 +27,9 @@ class DiscountServices extends BaseService
     {
         return $this->discountServices->activeDiscount($id);
     }
-    public function updateDiscount($id,$req)
+    public function updateDiscount($id, $req)
     {
-        return $this->discountServices->updateDiscount($id,$req);
+        return $this->discountServices->updateDiscount($id, $req);
     }
     public function addDiscountPercentage($req)
     {
@@ -47,9 +47,9 @@ class DiscountServices extends BaseService
     {
         return $this->discountServices->viewDiscountPercentage();
     }
-    public function updateDiscountPercentage($req,$id)
+    public function updateDiscountPercentage($req, $id)
     {
-        return $this->discountServices->updateDiscountPercentage($req,$id);
+        return $this->discountServices->updateDiscountPercentage($req, $id);
     }
     public function viewCoupon()
     {

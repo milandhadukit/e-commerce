@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Discount;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -21,7 +22,8 @@ class PaymentController extends Controller
     public function __construct()
     {
         // $this->stripe = new StripeClient(config('stripe.api_keys.secret_key'));
-        $this->middleware('auth:api');
+        // $this->middleware('auth:api');
+        $this->middleware('auth');
         $this->stripe = new StripeClient(
             'sk_test_51MObnySHLo1SypL9kQvmnrRaFYVvrgmzh5SzzQp0nfe8la1kwqBplAjAkvwVUYivRSlTwG1JLCpLzUcDQOC1hKlq00pL9akIqT'
         );
@@ -32,18 +34,25 @@ class PaymentController extends Controller
         return view('payment');
     }
 
+    public function paymentAdd()
+    {
+        // $productId=Product::find($id);
+        return view('payment_order');
+    }
+
     public function payment(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'fullName' => 'required',
-            'cardNumber' => 'required|integer|min:12',
+             'card_number' => 'required|integer|min:16',
             'month' => 'required|max:2',
             'year' => 'required|min:4',
             'cvv' => 'required|max:3',
-            'price' => 'required|numeric',
+            // 'price' => 'required|numeric',
             'product_id' => 'required|exists:products,id',
         ]);
         $mytime = Carbon::now();
+
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
@@ -82,19 +91,48 @@ class PaymentController extends Controller
             ->where('id', $request->product_id)
             ->first();
         $prices = $request->price;
-        if (isset($couponCode['coupon'])) {
-            $price =
-                ($couponCode['discount_percentage'] * $productPrice['price']) /
-                100;
 
-            $prices = $productPrice['price'] - $price;
+        # check discount price
+        $discountPrice = Discount::select('discount_price')
+            ->where('product_id', $request->product_id)
+            ->where('active', 1)
+            ->first();
+
+        if (!empty($discountPrice)) {
+            $prices = $discountPrice['discount_price'];
         }
 
-        if (isset($couponCode['coupon'])) {
+        // check coupon one time used
+        $paymentCodeCheck = Payment::select('coupon_code')
+            ->where('coupon_code', $request->coupon)
+            ->where('user_id', auth()->user()->id)
+            ->first();
+
+        $couponCheck = !empty($paymentCodeCheck)
+            ? $paymentCodeCheck['coupon_code'] == $couponCode['coupon']
+            : 0;
+        if ($couponCheck == true) {
+            $prices = $prices;
+        } else {
+            if (isset($couponCode['coupon'])) {
+                $price =
+                    ($couponCode['discount_percentage'] *
+                        $productPrice['price']) /
+                    100;
+
+                $prices = $productPrice['price'] - $price;
+            }
+        }
+
+        // dd($prices);
+
+        # if coupon one time valid to enter coupon in database
+        // if (isset($couponCode['coupon'])) {
+        if ($couponCheck == false) {
             Payment::create([
                 'coupon_code' => $request['coupon'],
                 'user_id' => auth()->user()->id,
-                'card_number' => $request['cardNumber'],
+                'card_number' => $request['card_number'],
                 'token_id' => $paymentToken['id'],
                 'price' => $prices,
                 'product_id' => $request->product_id,
@@ -103,7 +141,7 @@ class PaymentController extends Controller
         } else {
             Payment::create([
                 'user_id' => auth()->user()->id,
-                'card_number' => $request['cardNumber'],
+                'card_number' => $request['card_number'],
                 'token_id' => $paymentToken['id'],
                 'price' => $prices,
                 'product_id' => $request->product_id,
@@ -140,7 +178,7 @@ class PaymentController extends Controller
         try {
             $charge = $this->stripe->charges->create([
                 'amount' => $amount,
-                'currency' => 'amd',
+                'currency' => 'usd',
                 'source' => $tokenId,
                 'description' => 'order payment',
             ]);

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Services\CategoryandProductService;
+use App\Models\Discount;
 
 class CategoryandProductController extends Controller
 {
@@ -25,6 +26,16 @@ class CategoryandProductController extends Controller
         }
     }
 
+
+    // public function viewProducts()
+    // {
+        
+    //     return view('view_product');
+    // }
+
+
+
+
     //view product listing & pagination manage
     public function viewProduct(Request  $request)
     {
@@ -39,7 +50,21 @@ class CategoryandProductController extends Controller
 
           
             $product = $this->categoryProductController->viewProduct( $page,  $pageLimit);
-            return $this->sendResponse('success', $product);
+            // return $this->sendResponse('success', $product);
+            
+
+
+            $discountPrice = Discount::select('product_id')
+         ->where('active', 1)
+         ->get();
+            
+
+
+            return view('view_product',compact('product','discountPrice'));
+
+
+
+
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
         }

@@ -23,4 +23,8 @@ class CartService extends BaseService
     {
         return $this->cartService->removeCart($id);
     }
+    public function updateToCart($req,$request,$id)
+    {
+        return  $this->cartService->updateToCart($req,$request,$id);
+    }
 }

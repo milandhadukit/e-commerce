@@ -69,7 +69,7 @@ class CustomerReviewRepository extends BaseRepository
         return  $updateReview->update($reviewData);
    
     }
-    public function deleteCustomerReview($id)
+    public function deleteMyReview($id)
     {
         $deleteReview=CustomerReview::where('user_id',auth()->user()->id)->find($id);
         $deleteReview->delete();

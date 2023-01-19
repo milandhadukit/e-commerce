@@ -63,7 +63,7 @@ class CustomerReviewController extends Controller
     }
 
 
-    public function deleteCustomerReview($id)
+    public function deleteMyReview($id)
     {
         try {
             $checkId = CustomerReview::where('id', $id)->first();
@@ -71,7 +71,7 @@ class CustomerReviewController extends Controller
             {
                 return $this->noAvailable('sorry','Not Found');
             }
-            $category = $this->customerReviewService->deleteCustomerReview($id);
+            $category = $this->customerReviewService->deleteMyReview($id);
             return $this->sendResponse('success', $category);
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());

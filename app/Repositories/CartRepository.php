@@ -3,6 +3,7 @@ namespace App\Repositories;
 use App\Repositories\BaseRepository;
 use App\Models\Product;
 use App\Models\Cart;
+use App\Models\Discount;
 
 class CartRepository extends BaseRepository
 {
@@ -19,9 +20,21 @@ class CartRepository extends BaseRepository
             ->where('id', $request->product_id)
             ->first();
 
+        # check discount price
+        $discountPrice = Discount::select('discount_price')
+            ->where('product_id', $request->product_id)
+            ->where('active', 1)
+            ->first();
+
         $qty = $request->quantity;
         $qtryTotal = $productPrice['price'] * $qty;
 
+        if (!empty($discountPrice)) {
+        
+            $qtryTotal = $discountPrice['discount_price'] * $qty;
+        }
+
+     
         //   dd($qtryTotal);
 
         if (empty($check)) {
@@ -31,7 +44,7 @@ class CartRepository extends BaseRepository
                 'user_id' => auth()->user()->id,
                 'product_id' => $req['product_id'],
             ];
-           
+
             $cartAdd = Cart::create($cartDetails);
             return $cartAdd;
         }
@@ -45,7 +58,7 @@ class CartRepository extends BaseRepository
             'products.description',
             'products.image',
             'carts.quantity',
-            'carts.total_price',
+            'carts.total_price'
         )
             ->where('user_id', auth()->user()->id)
             ->join('products', 'products.id', 'carts.product_id')
@@ -56,12 +69,29 @@ class CartRepository extends BaseRepository
 
     public function removeCart($id)
     {
-        $removeProduct = Cart::where('user_id', auth()->user()->id)->find($id);
-
-        if (empty($removeProduct)) {
-            return null;  
-        }
-        $removeProduct->delete();
+        $removeProduct = Cart::where('product_id', $id)->delete();
         return $removeProduct;
+
+        // if (empty($removeProduct)) {
+        //     return null;
+        // }
+    }
+    public function updateToCart($req, $request, $id)
+    {
+        $productPrice = Product::select('price')
+            ->where('id', $id)
+            ->first();
+
+        $qty = $request->quantity;
+        $qtryTotal = $productPrice['price'] * $qty;
+
+        $cartDetails = [
+            'quantity' => $req['quantity'],
+            'total_price' => $qtryTotal,
+        ];
+        $updateProduct = Cart::where('user_id', auth()->user()->id)
+            ->where('product_id', $id)
+            ->update($cartDetails);
+        return $updateProduct;
     }
 }
