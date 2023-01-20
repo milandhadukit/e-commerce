@@ -41,12 +41,12 @@
         <tr>
             <th>id</th>
             <th>name</th>
-            <th>description</th>
+            {{-- <th>description</th> --}}
             <th>image </th>
             <th> price (₹)</th>
             <th>discount_price (₹) </th>
             <th>discount_percentage(%)</th>
-            <th>tc</th>
+            {{-- <th>tc</th> --}}
             <th>action</th>
 
         </tr>
@@ -54,9 +54,12 @@
         @foreach ($product as $productData)
             <tr>
                 <td>{{ $productData->id }}</td>
+
                 <td>{{ $productData->name }}</td>
-                <td>{{ $productData->description }}</td>
-                <td>{{ $productData->image }}</td>
+                {{-- <td>{{ $productData->description }}</td> --}}
+            
+                <td><img src="{{asset('product_image/'.$productData->image)}}" alt="product image " height="100" width="100"></td>
+                {{-- <td>{{ $productData->image }}</td> --}}
 
 
                 @foreach ($discountPrice as $pd)
@@ -69,7 +72,7 @@
                 <td>{{ $productData->discount_price }}</td>
 
                 <td>{{ $productData->discount_percentage }}</td>
-                <td>{{ $productData->tc }}</td>
+                {{-- <td>{{ $productData->tc }}</td> --}}
                 <td>
 
 
@@ -91,6 +94,7 @@
                         <button class="btn btn-outline-success"> By Order</button>
                     </form>
 
+                    <a href="{{route('single-view',$productData->id)}}">View Detials</a>
 
                 </td>
         @endforeach

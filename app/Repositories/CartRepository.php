@@ -9,10 +9,11 @@ class CartRepository extends BaseRepository
 {
     public function addToCart($req, $request)
     {
-        $check = Cart::select('product_id')
+        $check = Cart::select('product_id', 'quantity', 'total_price')
             ->where('user_id', auth()->user()->id)
             ->where('product_id', $request->product_id)
             ->first();
+
         // return $check;
         // dd($check);
 
@@ -25,17 +26,14 @@ class CartRepository extends BaseRepository
             ->where('product_id', $request->product_id)
             ->where('active', 1)
             ->first();
-
         $qty = $request->quantity;
         $qtryTotal = $productPrice['price'] * $qty;
 
         if (!empty($discountPrice)) {
-        
             $qtryTotal = $discountPrice['discount_price'] * $qty;
         }
 
-     
-        //   dd($qtryTotal);
+        // dd($checkQty);
 
         if (empty($check)) {
             $cartDetails = [
@@ -47,6 +45,22 @@ class CartRepository extends BaseRepository
 
             $cartAdd = Cart::create($cartDetails);
             return $cartAdd;
+        } else {
+            $getQty = $check['quantity'];
+            $totalPrice = $check['total_price'];
+            $qtyIncrement = $getQty + 1;
+            $totalPriceIncrement = $totalPrice * $qtyIncrement;
+
+            $qtyincrement = [
+                'quantity' => $qtyIncrement,
+                'total_price' => $totalPriceIncrement,
+            ];
+
+            $checkQty = Cart::where('user_id', auth()->user()->id)
+                ->where('product_id', $request->product_id)
+                ->update($qtyincrement);
+
+            return $checkQty;
         }
     }
 

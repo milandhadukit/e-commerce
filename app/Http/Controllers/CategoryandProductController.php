@@ -26,45 +26,40 @@ class CategoryandProductController extends Controller
         }
     }
 
-
     // public function viewProducts()
     // {
-        
+
     //     return view('view_product');
     // }
 
-
-
-
     //view product listing & pagination manage
-    public function viewProduct(Request  $request)
+    public function viewProduct(Request $request)
     {
         try {
-
             // $page= $request['page'];
             // $perPage=$request['perPage'];
 
-            $pageNumber = isset($request['page']) && !empty($request['page']) ? $request['page'] : 1;
-            $pageLimit = isset($request['perPage']) && !empty($request['perPage']) ? $request['perPage'] : 5;
+            $pageNumber =
+                isset($request['page']) && !empty($request['page'])
+                    ? $request['page']
+                    : 1;
+            $pageLimit =
+                isset($request['perPage']) && !empty($request['perPage'])
+                    ? $request['perPage']
+                    : 5;
             $page = ($pageNumber - 1) * $pageLimit;
 
-          
-            $product = $this->categoryProductController->viewProduct( $page,  $pageLimit);
+            $product = $this->categoryProductController->viewProduct(
+                $page,
+                $pageLimit
+            );
             // return $this->sendResponse('success', $product);
-            
-
 
             $discountPrice = Discount::select('product_id')
-         ->where('active', 1)
-         ->get();
-            
+                ->where('active', 1)
+                ->get();
 
-
-            return view('view_product',compact('product','discountPrice'));
-
-
-
-
+            return view('view_product', compact('product', 'discountPrice'));
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
         }
@@ -73,41 +68,42 @@ class CategoryandProductController extends Controller
     public function viewProducOnCategory($id)
     {
         try {
+            $checkCategory = Category::where('id', $id)->first();
 
-            $checkCategory=Category::where('id',$id)->first();
-         
-            if(empty($checkCategory))
-            {
-                return $this->noAvailable('sorry','No Category Found');
+            if (empty($checkCategory)) {
+                return $this->noAvailable('sorry', 'No Category Found');
             }
 
-            $checkCategoryProduct=Product::where('category_id',$id)->first();
-            if(empty($checkCategoryProduct))
-            {
+            $checkCategoryProduct = Product::where('category_id', $id)->first();
+            if (empty($checkCategoryProduct)) {
                 return $this->sendResponse('success', 'No Product Found');
             }
 
             $viewProducOnCategory = $this->categoryProductController->viewProducOnCategory(
                 $id
             );
-           
+
             return $this->sendResponse('success', $viewProducOnCategory);
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
         }
     }
 
-
     public function viewSingleProduct($id)
     {
         try {
-            $viewSingleProduct=Product::where('id',$id)->first();
-            if(empty($viewSingleProduct))
-            {
-                return $this->noAvailable('sorry','Not Found');
+            $viewSingleProduct = Product::where('id', $id)->first();
+            if (empty($viewSingleProduct)) {
+                return $this->noAvailable('sorry', 'Not Found');
             }
-            $category = $this->categoryProductController->viewSingleProduct($id);
-            return $this->sendResponse('success', $category);
+            $singleView = $this->categoryProductController->viewSingleProduct(
+                $id
+            );
+            // return $this->sendResponse('success', $singleView);
+
+            return view('view_single_productDetails',compact('singleView'));
+
+
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
         }

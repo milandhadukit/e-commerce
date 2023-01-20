@@ -66,7 +66,8 @@
                 <td>{{ $productData->product_id }}</td>
                 <td>{{ $productData->name }}</td>
                 <td>{{ $productData->description }}</td>
-                <td>{{ $productData->image }}</td>
+                <td><img src="{{asset('product_image/'.$productData->image)}}" alt="product image " height="100" width="100"></td>
+               
                 <td>{{ $productData->quantity }}</td>
                 <td>{{ $productData->total_price }}</td>
                 <td>

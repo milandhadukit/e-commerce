@@ -72,7 +72,7 @@ Route::get('stripe',  [PaymentController::class, 'stripe']);
  Route::get('/edit-cart/{id}', [CartController::class, 'editCart'])->name('edit-cart');
  Route::post('/update-cart/{id}', [CartController::class, 'updateToCart'])->name('update-cart');
 
-
+ Route::get('/view-single-product/{id}', [CategoryandProductController::class, 'viewSingleProduct'])->name('single-view');
 
 Auth::routes();
 

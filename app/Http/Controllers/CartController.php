@@ -62,7 +62,6 @@ class CartController extends Controller
                 ->get()
                 ->toArray();
             // dd($totalData[0]->id,$totalData[0]->total);
-
             return view('view_cart', compact('viewCart', 'totalData'));
         } catch (\Exception $e) {
             return $this->sendError('error', $e->getMessage());
